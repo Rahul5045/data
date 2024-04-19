@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Multi Level Dependent Drop Down</h2>
+
+        <form action="#">
+            <select name="" id="country">
+                <option value="">-- Select  car--</option>
+            </select>
+            <select name="" id="state">
+                <option value="">-- Select model --</option>
+            </select>
+            <select name="" id="city">
+                <option value="">-- Select year --</option>
+            </select>
+            <select name="" id="zip">
+                <option value="">-- Select engine --</option>
+            </select>
+        </form>
+
+    </div>
+    <script>
+        var countrySateCityinfo = {
+    audi: {
+        "A4": {
+            1999: ["(2.8L) from VIN 129647", "(2.8L) thru VIN 129646", ],
+            1998: ["2.8L, engine ID AFC", "1.8L (turbo), AT"]
+        },
+        a5: {
+            2001: ["(3.2L), (VIN K, 5th digit)"],
+            2002: ["(3.2L), (VIN K, 5th digit)", "3.2L (VIN K, 5th digit)"],
+            2003: ["(2.0L, VIN F, 5th digit), (engine ID located on front cover), engine ID CAE", "(2.0L, VIN F, 5th digit), (engine ID located on front cover), engine ID CAE"]
+        }
+    },
+    Acura: {
+        TLX : {
+            2004: ["(2.4L, VIN 9, 6th digit)", "(2.4L, VIN 9, 6th digit), from engine ID 2020025 (205 HP)", "(2.4L, VIN 9, 6th digit)"],
+            2005: ["(US market), 2.4L (VIN 1, 6th digit, FWD)", "9(US market), 2.4L (VIN 1, 6th digit, FWD)0403", "2.4L (VIN 1, 6th digit, FWD)"]
+        },
+        TSX: {
+            Frankfurt: ["60306", "60309", "60310"],
+            Surat: ["55246", "55247", "55248", "55249"]
+        }
+    },
+
+    Alfa: {
+        Sedan: {
+            1992: ["Sport, model VIN 3E (7th and 8th digits)", "Sport, model VIN 3R (7th and 8th digits)", "Sport, model VIN 3E (7th and 8th digits)"],
+            1993: ["LS (VIN 3E, 7th and 8th digits)", "LS (VIN 3E, 7th and 8th digits)", "Quadrifoglio (VIN 3R, 7th and 8th digits)"]
+        },
+        "Spider-2000": {
+            1990: ["(2.0L, VIN 2, 7th digit, Conv)", "2.0L, (VIN N, 8th digit, turbo)"],
+            1993: ["5 cylinder (2.2L)", "DOHC", "(2.0L, VIN 2, 7th digit, Conv)"]
+        }
+    }
+    
+}
+
+window.onload = function(){
+    const selectCountry = document.getElementById('country'),
+        selectState = document.getElementById('state'),
+        selectCity = document.getElementById('city'),
+        selectZip = document.getElementById('zip'),
+        selects = document.querySelectorAll('select')
+
+        selectState.disabled = true
+        selectCity.disabled = true
+        selectZip.disabled = true
+
+        selects.forEach(select => {
+            if(select.disabled == true){
+                select.style.cursor = "auto"
+            }
+            else{
+                select.style.cursor = "pointer"
+            }
+        })
+
+        for(let country in countrySateCityinfo){
+            // console.log(country);
+            selectCountry.options[selectCountry.options.length] = new Option(country, country)
+        }
+
+
+        // country change
+        selectCountry.onchange = (e) =>{
+            
+            selectState.disabled = false
+            selectCity.disabled = true
+            selectZip.disabled = true
+
+            selects.forEach(select => {
+                if(select.disabled == true){
+                    select.style.cursor = "auto"
+                }
+                else{
+                    select.style.cursor = "pointer"
+                }
+            })
+
+            selectState.length = 1
+            selectCity.length = 1
+            selectZip.length = 1
+
+            for(let state in countrySateCityinfo[e.target.value]){
+                // console.log(state);
+                selectState.options[selectState.options.length] = new Option(state, state)
+            }
+        }
+
+        // state change
+        selectState.onchange = (e) =>{
+            selectCity.disabled = false
+            selectZip.disabled = true
+
+            selects.forEach(select => {
+                if(select.disabled == true){
+                    select.style.cursor = "auto"
+                }
+                else{
+                    select.style.cursor = "pointer"
+                }
+            })
+
+            selectCity.length = 1
+            selectZip.length = 1
+
+            for(let city in countrySateCityinfo[selectCountry.value][e.target.value]){
+                // console.log(city);
+                selectCity.options[selectCity.options.length] = new Option(city, city)
+            }
+        }
+
+        // change city
+        selectCity.onchange = (e) =>{
+            selectZip.disabled = false
+
+            selects.forEach(select => {
+                if(select.disabled == true){
+                    select.style.cursor = "auto"
+                }
+                else{
+                    select.style.cursor = "pointer"
+                }
+            })
+            
+            selectZip.length = 1
+
+            let zips = countrySateCityinfo[selectCountry.value][selectState.value][e.target.value]
+            
+            for(let i=0; i<zips.length; i++){
+                selectZip.options[selectZip.options.length] = new Option(zips[i], zips[i])
+            }
+        }
+}
+
+    </script>
+</body>
+</html>
